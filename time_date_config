@@ -1,0 +1,28 @@
+server 10.10.10.10 iburst
+server 10.10.10.10 iburst
+
+#exapmle ip 
+#this is /etc/chrony.conf file 
+#after installing restart the chronyd.service
+
+makestep 1.0 3
+
+keyfile /etc/chrony.keys
+
+commandkey 1
+
+driftfile /var/lib/chrony/chrony.drift
+
+log tracking measurements statistics
+logdir /var/log/chrony
+
+maxupdateskew 100.0
+
+dumponexit
+
+dumpdir /var/lib/chrony
+
+local stratum 10
+
+logchange 0.5
+rtconutc
