@@ -1,0 +1,6 @@
+cat /etc/sysconfig/network-scripts/route-enp1s0
+
+ADDRESS0=10.0.0.0
+NETMASK0=255.255.255.0
+GATEWAY0=192.168.1.1
+
