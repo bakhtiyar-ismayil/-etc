@@ -1,0 +1,59 @@
+# Forward log messages containing the substring "key=\"siem-" to a remote syslog server
+
+# If a log message contains "key=\"siem-", take the following action:
+:msg, contains, "key=\"siem-" @10.10.10.10; t_os
+& ~
+#example ip address
+# Terminate further processing for this log message to avoid redundant actions
+
+# /etc/rsyslog.conf
+
+# Set the default logging rules
+*.*    /var/log/syslog
+
+# Log messages from the mail subsystem
+mail.*    -/var/log/mail.log
+
+# Log messages from the cron subsystem
+cron.*    /var/log/cron.log
+
+# Log messages from the auth subsystem
+auth.*    /var/log/auth.log
+
+# Log kernel messages
+kern.*    -/var/log/kern.log
+
+# Log messages from user processes with a priority of 'info' or higher
+user.*    /var/log/user.log
+
+# Log emergency messages to a separate file
+*.emerg   :omusrmsg:*
+
+# Uncomment the following line to stop logging messages to console
+#daemon,mail.*;\
+#       news.=crit;news.=err;news.=notice;\
+#       *.=debug;*.=info;\
+#       *.=notice;*.=warn   |/dev/xconsole
+
+
+*.* @10.10.10.10:514
+#This line instructs rsyslog to forward all log messages (*.*) to a remote syslog server at IP address 10.10.10.10  on port 514 using the default UDP transport protocol.
+
+
+#$ModLoad imuxsock: This line loads the imuxsock module, which provides support for reading messages from the system's socket interface. It allows rsyslog to collect log messages from local processes.
+
+#$ModLoad imjournal: This line loads the imjournal module, which enables rsyslog to read log messages from the system journal. The system journal is managed by systemd-journald, and this module allows rsyslog to integrate with the journal to collect log data.
+
+#$ModLoad imfile: This line is commented out (indicated by #). If uncommented, it would load the imfile module, which allows rsyslog to read log messages from text files.
+
+#$WorkDirectory /var/lib/rsyslog: This sets the working directory for rsyslog, where it may store some temporary files or state information.
+
+#$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat: This sets the default template for log file actions. RSYSLOG_TraditionalFileFormat is a predefined template that formats log messages in a way similar to traditional syslog.
+
+#$IncludeConfig /etc/rsyslog.d/*.conf: This line is commented out. If uncommented, it would include additional configuration files from the /etc/rsyslog.d/ directory. This is a common practice to keep the main configuration file cleaner by placing specific configurations in separate files.
+
+#$OmitLocalLogging on: This setting instructs rsyslog to omit logging messages generated locally by itself. It helps prevent recursive logging loops.
+
+#$IMJournalStateFile imjournal.state: This specifies the state file for the imjournal module. This file keeps track of the current position in the journal, allowing rsyslog to resume reading from where it left off.
+
+#$EscapeControlCharactersOnReceive on: This setting enables the escaping of control characters on message reception. It's a security measure to prevent malicious log messages from causing issues when processed by rsyslog.
